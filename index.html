@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Socket.IO chat</title>
+	<meta name="viewport" content="initial-scale=1.0">
+	<meta charset="utf-8">
+	<style>
+		/* Always set the map height explicitly to define the size of the div
+		* element that contains the map. */
+		#map {
+			height: 100%;
+		}
+		/* Optional: Makes the sample page fill the window. */
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="teste"></div>
+	<div id="map"></div>
+</body>
+<script>    
+            function initMap() {
+                alert('iniciando mapa');
+                var map;
+                var errCb = function (err) {
+                    console.warn(`ERROR(${err.code}): ${err.message}`);
+                }
+                var options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+                if (navigator.geolocation) {
+                    document.getElementById('teste').innerHTML = 'ENTROU NO IF';
+                    navigator.geolocation.getCurrentPosition(function (position) {              
+                        const { latitude:lat, longitude:lng } = position.coords;
+                        map = new google.maps.Map(document.getElementById('map'), {
+                            center: {lat, lng},
+                            zoom: 7
+                        });
+                        var marker = new google.maps.Marker({
+                            position: {lat, lng},
+                            map: map
+                        });
+                        navigator.geolocation.watchPosition(function (position) {
+                            console.log('position changed')
+                            const { latitude:lat, longitude:lng } = position.coords;
+                            map.setCenter({lat,lng});
+                            const latLng = new google.maps.LatLng(lat,lng);
+                            marker.setPosition(latLng);
+                        }, errCb, options);
+                    },
+                    errCb
+                    ,
+                    options
+                    );
+                } else {
+                    document.getElementById('teste').innerHTML = 'NÃO ENTROU NO IF';
+                }
+            }
+        </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_j_LIDpttHeObdrQf-x4iYYYEN8XtyHo&callback=initMap"
+    async defer></script>
+
+</html>
